@@ -1,11 +1,15 @@
 import { useMyPresence, useOthers } from "@liveblocks/react"
 import LiveCursors from "./cursor/LiveCursors"
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import CursorChat from "./cursor/CursorChat";
+import { CursorMode } from "@/types/type";
 
 const Live = () => {
 
   const others = useOthers();
   const [{ cursor }, updateMyPresence] = useMyPresence() as any;
+
+  const [cursorState, setcursorState] = useState({mode: CursorMode.Hidden})
 
   const handlePointerMove = useCallback((event: React.PointerEvent) => {
     event.preventDefault();
@@ -17,8 +21,7 @@ const Live = () => {
   }, [])
 
   const handlePointerLeave = useCallback((event: React.PointerEvent) => {
-    event.preventDefault();
-
+    setcursorState({ mode: CursorMode.Hidden })
     updateMyPresence({ cursor: null, message: null });
   }, [])
 
@@ -30,6 +33,35 @@ const Live = () => {
     updateMyPresence({ cursor: { x, y }});
   }, [])
 
+  useEffect(() => {
+    const onKeyUp = (e: KeyboardEvent) => {
+      if(e.key === '/') {
+        setcursorState({
+          mode: CursorMode.Chat,
+          previousMessage: null,
+          message: ''
+        })
+      } else if(e.key === 'Escape') {
+        updateMyPresence({ message: '' })
+        setcursorState({ mode: CursorMode.Hidden })
+      }
+    }
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if(e.key === '/') {
+        e.preventDefault();
+      }
+    }
+
+    window.addEventListener('keyup', onKeyUp);
+    window.addEventListener('keydown', onKeyDown);
+
+    return () => {
+      window.addEventListener('keyup', onKeyUp);
+      window.addEventListener('keydown', onKeyDown);
+    }
+  }, [updateMyPresence])
+
   return (
     <div className="h-[100vh] w-full flex justify-center items-center text-center"
       onPointerMove={handlePointerMove}
@@ -37,6 +69,14 @@ const Live = () => {
       onPointerDown={handlePointerDown}
     >
       <h1 className="text-2xl text-white">Liveblocks Figma Clone</h1>
+      {cursor && (
+        <CursorChat
+          cursor={cursor}
+          cursorState={cursorState}
+          setCursorState={setcursorState}
+          updateMyPresence={updateMyPresence}
+        />
+      )}
       <LiveCursors others={others}/>
     </div>
   )
