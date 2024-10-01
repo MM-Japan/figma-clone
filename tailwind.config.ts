@@ -21,7 +21,7 @@ const config = {
       colors: {
         primary: {
           black: "#000F13",
-          green: "#560217",
+          green: "#DC89A3",
           grey: {
             100: "#2B303B",
             200: "#202731",
