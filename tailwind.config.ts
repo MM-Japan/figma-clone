@@ -20,8 +20,8 @@ const config = {
     extend: {
       colors: {
         primary: {
-          black: "#14181F",
-          green: "#56FFA6",
+          black: "#000F13",
+          green: "#560217",
           grey: {
             100: "#2B303B",
             200: "#202731",

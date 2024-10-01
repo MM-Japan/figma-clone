@@ -1,11 +1,14 @@
-import { COLORS } from '@/constants';
-import { LiveCursorProps } from '@/types/type'
-import Cursor from './Cursor';
+import Cursor from "./Cursor";
+import { COLORS } from "@/constants";
+import { LiveCursorProps } from "@/types/type";
 
+// display all other live cursors
 const LiveCursors = ({ others }: LiveCursorProps) => {
   return others.map(({ connectionId, presence }) => {
-    if (!presence?.cursor) return null;
-    
+    if (presence == null || !presence?.cursor) {
+      return null;
+    }
+
     return (
       <Cursor
         key={connectionId}
@@ -13,10 +16,9 @@ const LiveCursors = ({ others }: LiveCursorProps) => {
         x={presence.cursor.x}
         y={presence.cursor.y}
         message={presence.message}
-
       />
-    )
-  })
-}
+    );
+  });
+};
 
-export default LiveCursors
+export default LiveCursors;
